@@ -1,13 +1,10 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use std::net::TcpListener;
 
-async fn health_check() -> impl Responder {
-    HttpResponse::Ok()
-}
+use actix_web;
+use zero2prod::run;
 
 #[actix_web::main]
 async fn main() -> Result<(), std::io::Error> {
-    HttpServer::new(|| App::new().route("/health_check", web::get().to(health_check)))
-        .bind("127.0.0.1:8000")?
-        .run()
-        .await
+    let listener = TcpListener::bind("localhost:0")?;
+    run(listener)?.await
 }
